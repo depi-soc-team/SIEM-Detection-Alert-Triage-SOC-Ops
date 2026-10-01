@@ -40,7 +40,7 @@ git --version
 
 1. افتح GitHub Desktop.
 2. **File > Options > Accounts > Sign in** وادخل بأكونت GitHub بتاعك في المتصفح.
-3. اتأكد إن الأكونت ده عضو في الـ org `depi-soc-team` (لو مش شايف الـ repo، كلم Basel).
+3. اتأكد إن الأكونت ده عضو في الـ org `depi-soc-team` (لو مش شايف الـ repo، كلم الـ Lead).
 
 ### 1.3 اعمل clone للـ repo في `C:\dev\`
 
@@ -98,15 +98,17 @@ git config --global --list
 
 **update main → create branch → edit → commit → push → open PR**
 
+> في الأمثلة تحت، غيّر `<member>` لاسمك الأول (lowercase) **من غير** علامات `< >` — مثلاً `git switch -c yourname/fortigate-syslog`. PowerShell هيطلع error لو سبت `<` و `>`.
+
 ### مقارنة سريعة
 
 | الخطوة | GitHub Desktop | Command line (PowerShell) | موقع GitHub بس |
 |---|---|---|---|
 | 1. update main | **Current branch** = `main` ثم **Fetch origin** ثم **Pull origin** | `git switch main` ثم `git pull` | مش محتاج — الموقع دايماً على آخر نسخة |
-| 2. create branch | **Current branch > New branch** | `git switch -c merna/fortigate-syslog` | بيتعمل وقت الـ commit (خطوة 4) |
+| 2. create branch | **Current branch > New branch** | `git switch -c <member>/fortigate-syslog` | بيتعمل وقت الـ commit (خطوة 4) |
 | 3. edit | عدّل الملفات بأي editor (VS Code مثلاً) | عدّل الملفات بأي editor | **Add file > Upload files** أو أيقونة القلم ✏️ (**Edit this file**) |
-| 4. commit | اكتب Summary تحت على الشمال ثم **Commit to merna/...** | `git add <file>` ثم `git commit -m "..."` | **Commit changes...** ثم اختار **Create a new branch for this commit and start a pull request** |
-| 5. push | **Publish branch** (أول مرة) أو **Push origin** | `git push -u origin merna/fortigate-syslog` | بيحصل تلقائي |
+| 4. commit | اكتب Summary تحت على الشمال ثم **Commit to <member>/...** | `git add <file>` ثم `git commit -m "..."` | **Commit changes...** ثم اختار **Create a new branch for this commit and start a pull request** |
+| 5. push | **Publish branch** (أول مرة) أو **Push origin** | `git push -u origin <member>/fortigate-syslog` | بيحصل تلقائي |
 | 6. open PR | **Preview Pull Request** ثم **Create pull request** | افتح اللينك اللي بيطلع بعد الـ push | **Propose changes** ثم **Create pull request** |
 
 التفاصيل تحت 👇
@@ -118,7 +120,7 @@ git config --global --list
    - اضغط **Fetch origin**، ولو ظهر **Pull origin** اضغطه.
 2. **create branch**
    - **Current branch > New branch**
-   - اكتب الاسم: `merna/fortigate-syslog` (شوف [القواعد](#3-القواعد))
+   - اكتب الاسم: `<member>/fortigate-syslog` (شوف [القواعد](#3-القواعد))
    - اتأكد إن **Create branch based on** = `main`، واضغط **Create branch**.
 3. **edit**
    - اضغط **Show in Explorer** أو **Open in Visual Studio Code** وعدّل الملفات.
@@ -126,7 +128,7 @@ git config --global --list
 4. **commit**
    - راجع التغييرات في تاب **Changes** — اتأكد مفيش IP أو باسورد حقيقي.
    - تحت على الشمال: اكتب **Summary** واضح، مثلاً `Add FortiGate syslog onboarding guide`.
-   - اضغط **Commit to merna/fortigate-syslog**.
+   - اضغط **Commit to <member>/fortigate-syslog**.
 5. **push**
    - أول مرة: **Publish branch**.
    - بعد كده: **Push origin**.
@@ -152,7 +154,7 @@ git pull
 2. **create branch**
 
 ```powershell
-git switch -c merna/fortigate-syslog
+git switch -c <member>/fortigate-syslog
 ```
 
 3. **edit** — عدّل الملفات بأي editor، وبعدين شوف إيه اللي اتغير:
@@ -172,7 +174,7 @@ git commit -m "Add FortiGate syslog onboarding guide"
 5. **push**
 
 ```powershell
-git push -u origin merna/fortigate-syslog
+git push -u origin <member>/fortigate-syslog
 ```
 
 بعد أول مرة، أي commit جديد على نفس الـ branch بيكفيه:
@@ -197,29 +199,29 @@ git push
    - اضغط **Commit changes...**
    - اكتب **Commit message** واضح.
    - اختار **Create a new branch for this commit and start a pull request**.
-   - ⚠️ غيّر اسم الـ branch المقترح (زي `merna-patch-1`) لاسم بالقواعد: `merna/fortigate-syslog`.
+   - ⚠️ غيّر اسم الـ branch المقترح (زي `<username>-patch-1`) لاسم بالقواعد: `<member>/fortigate-syslog`.
    - اضغط **Propose changes**.
 4. **push** — بيحصل تلقائي.
 5. **open PR** — هتتنقل لصفحة **Open a pull request**. كمّل زي [قسم 4](#4-الـ-pull-request) واضغط **Create pull request**.
 
-> عايز تعدّل تاني على نفس الـ PR؟ من الموقع اختار الـ branch بتاعك من القايمة اللي فوق على الشمال (مكتوب فيها `main`) قبل ما تعدّل، واختار **Commit directly to the merna/... branch**.
+> عايز تعدّل تاني على نفس الـ PR؟ من الموقع اختار الـ branch بتاعك من القايمة اللي فوق على الشمال (مكتوب فيها `main`) قبل ما تعدّل، واختار **Commit directly to the <member>/... branch**.
 
 ---
 
 ## 3. القواعد
 
-1. **branch لكل task، مش لكل شخص.** كل issue = branch = PR. ماتعملش branch اسمه `merna` وتحط فيه كل شغلك.
+1. **branch لكل task، مش لكل شخص.** كل issue = branch = PR. ماتعملش branch باسمك بس (زي `<member>`) وتحط فيه كل شغلك.
 2. **اسم الـ branch:** `<member>/<short-task>`
-   - `member` واحد من: `basel`, `merna`, `ramez`, `saieed`, `ahmed`
+   - `member`: اسمك الأول بالإنجليزي، lowercase
    - `short-task`: كلمتين تلاتة، lowercase و kebab-case (شرطة بين الكلمات)
-   - أمثلة: `basel/project-plan`, `merna/fortigate-syslog`, `ramez/dr-001-suspicious-powershell`, `saieed/tr-001-brute-force`, `ahmed/soc-dashboard`
+   - أمثلة: `<member>/project-plan`, `<member>/fortigate-syslog`, `<member>/dr-001-suspicious-powershell`, `<member>/tr-001-brute-force`, `<member>/soc-dashboard`
 3. **دايماً اعمل pull لـ `main` قبل ما تبدأ task جديدة.** (خطوة 1 فوق)
 4. **امسح الـ branch بعد الـ merge.** على صفحة الـ PR بعد الـ merge اضغط **Delete branch**. وعلى جهازك:
 
 ```powershell
 git switch main
 git pull
-git branch -d merna/fortigate-syslog
+git branch -d <member>/fortigate-syslog
 ```
 
 5. **ماتعملش commit على `main` مباشرة.** لو حصل بالغلط شوف [قسم 8](#8-مشاكل-شائعة-وحلها).
@@ -242,9 +244,9 @@ Closes #N
 ```
 
 3. **`Closes #N`:** غيّر `N` لرقم الـ issue (مثلاً `Closes #5`). كده الـ issue هيتقفل لوحده لما الـ PR يتعمله merge.
-4. **Reviewer:** في الـ sidebar على اليمين ← **Reviewers** ⚙️ ← اختار الـ **Support member** المكتوب في الـ issue.
+4. **Reviewer:** في الـ sidebar على اليمين ← **Reviewers** ⚙️ ← اختار الشخص اللي ماسك الـ **Support** role المكتوب في الـ issue.
    - لو الـ Support "All members"، اختار أي حد من التيم.
-   - لو الـ Support هو انت نفسك أو مش موجود، اختار Basel.
+   - لو الـ Support هو انت نفسك أو مش موجود، اختار الـ Lead.
 5. اضغط **Create pull request**، وحرّك الكارت لـ **Review** (شوف [قسم 7](#7-تحريك-الكروت-على-الـ-soc-project-board)).
 
 ---
@@ -253,9 +255,9 @@ Closes #N
 
 | الدور | مين | بيعمل إيه |
 |---|---|---|
-| Author | صاحب الـ issue (الـ Owner) | بيفتح الـ PR ويطلب review ويصلّح الـ comments |
-| Reviewer | الـ Support member بتاع الـ issue | بيراجع بالـ [checklist](#6-checklist-للـ-reviewer) ويعمل **Approve** |
-| Merger | Basel (Lead) | بيعمل **Merge** بعد الـ approval |
+| Author | اللي ماسك الـ **Owner** role في الـ issue | بيفتح الـ PR ويطلب review ويصلّح الـ comments |
+| Reviewer | اللي ماسك الـ **Support** role في الـ issue | بيراجع بالـ [checklist](#6-checklist-للـ-reviewer) ويعمل **Approve** |
+| Merger | الـ Lead | بيعمل **Merge** بعد الـ approval |
 
 **خطوات الـ Reviewer على GitHub:**
 
@@ -266,13 +268,13 @@ Closes #N
    - **Request changes** لو في حاجة لازم تتصلح
 4. اضغط **Submit review**.
 
-**خطوات الـ Merge (Basel):**
+**خطوات الـ Merge (الـ Lead):**
 
 1. اتأكد إن في **Approve** واحد على الأقل.
 2. اضغط **Merge pull request** ← **Confirm merge**.
 3. اضغط **Delete branch**.
 
-**لو Basel مش متاح:** الـ reviewer نفسه يقدر يعمل merge **بعد** ما يعمل approve.
+**لو الـ Lead مش متاح:** الـ reviewer نفسه يقدر يعمل merge **بعد** ما يعمل approve.
 
 > ⚠️ **ماتعملش merge للـ PR بتاعك من غير review أبداً.**
 > ده team rule — GitHub مش هيمنعك (الـ free plan مع private repo مفيهوش branch protection)، فإحنا بنعتمد على بعض.
@@ -358,32 +360,32 @@ git push
 
 في GitHub Desktop: بعد ما تصلح كل الملفات اضغط **Continue merge**.
 
-> لو مش فاهم الـ conflict، ماتخمّنش — اسأل صاحب التعديل التاني أو Basel.
+> لو مش فاهم الـ conflict، ماتخمّنش — اسأل صاحب التعديل التاني أو الـ Lead.
 
 ### عملت commit على `main` بالغلط
 
 **لو لسه ماعملتش push:** انقل الـ commit لـ branch جديد ورجّع `main` زي ما كان:
 
 ```powershell
-git branch merna/my-task
+git branch <member>/my-task
 git reset --hard origin/main
-git switch merna/my-task
+git switch <member>/my-task
 ```
 
 1. السطر الأول بيعمل branch جديد فيه الـ commit بتاعك.
 2. السطر التاني بيرجّع `main` زي GitHub. ⚠️ اعمله **بعد** السطر الأول بس، وإلا هتخسر الـ commit.
 3. السطر التالت بينقلك على الـ branch الجديد — كمّل عادي (push ← PR).
 
-في GitHub Desktop: تاب **History** ← كليك يمين على الـ commit ← **Undo commit**. التغييرات هترجع **Changes**، وبعدين **Current branch > New branch** واختار **Bring my changes to merna/my-task**.
+في GitHub Desktop: تاب **History** ← كليك يمين على الـ commit ← **Undo commit**. التغييرات هترجع **Changes**، وبعدين **Current branch > New branch** واختار **Bring my changes to <member>/my-task**.
 
-**لو عملت push على `main`:** ماتحاولش تصلحها لوحدك — كلم Basel.
+**لو عملت push على `main`:** ماتحاولش تصلحها لوحدك — كلم الـ Lead.
 
 ### عملت commit لـ secret بالغلط (password, API key, token, IP حقيقي)
 
-1. **بلّغ Basel فوراً** — حتى لو لسه ماعملتش push.
+1. **بلّغ الـ Lead فوراً** — حتى لو لسه ماعملتش push.
 2. **ماتكتفيش إنك تمسحه في commit جديد.** الـ secret هيفضل موجود في الـ Git history وأي حد يقدر يشوفه.
 3. الـ secret ده يعتبر **اتسرب**: لازم يتغير (password جديد، token جديد) في المكان الأصلي.
-4. Basel هيتولى تنضيف الـ history.
+4. الـ Lead هيتولى تنضيف الـ history.
 
 ---
 

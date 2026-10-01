@@ -24,13 +24,15 @@ Design and operate a small, realistic Security Operations Center (SOC) lab that:
 
 ## Team
 
-| Member | Role |
-|--------|------|
-| Basel Mostafa | Lead & Architect |
-| Merna Walid | Infra & Onboarding |
-| Ramez Karam | Detection Engineering |
-| Saieed Mohamed | Attack Simulation & SOC Analyst |
-| Ahmed El-Najjar | Dashboards, SOAR & AI |
+Role assignments are not final yet. Issues are labeled by role (`role:*`), not by person.
+
+| Role | Label | Responsibilities | Member |
+|------|-------|------------------|--------|
+| Lead & Architect | `role:lead` | Project plan, SIEM architecture, data retention, requirements, final report and presentation; merges PRs | TBD |
+| Infra & Onboarding | `role:infra` | Elastic Stack and Fleet, Elastic Agent + Sysmon, FortiGate syslog, Tailscale remote access, Kibana accounts and RBAC, ECS field mapping | TBD |
+| Detection Engineering | `role:detection` | Detection use cases, Elastic Security rules, MITRE ATT&CK mapping and coverage, rule tuning | TBD |
+| Attack Simulation & SOC Analyst | `role:attack-sim-analyst` | Lab VMs (Linux target, Kali), attack simulations, test results, triage reports, escalation templates | TBD |
+| Dashboards, SOAR & AI | `role:dashboards-soar-ai` | SOC dashboard and KPIs (MTTD/MTTR), threat intel enrichment, Shuffle SOAR playbook, AI-assisted triage (Ollama) | TBD |
 
 ## Repository Structure
 
@@ -42,13 +44,18 @@ Design and operate a small, realistic Security Operations Center (SOC) lab that:
 05-triage/            Triage reports and runbooks (see triage-template.md)
 06-soar-ai/           SOAR playbooks and AI-assisted workflows
 final-report/         Final deliverables
-docs/                 Team guides (Git & GitHub workflow)
+docs/                 Team guides (Git & GitHub workflow, remote lab access)
 ```
 
 ## Contributing
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — team rules: branch naming, PR flow, screenshot naming, security rules
 - [docs/GIT-GUIDE.md](docs/GIT-GUIDE.md) — step-by-step Git & GitHub guide for the team (Egyptian Arabic, beginner friendly)
+
+## Lab Access
+
+- [docs/REMOTE-ACCESS.md](docs/REMOTE-ACCESS.md) — how to reach the lab and Kibana remotely over Tailscale (Egyptian Arabic, beginner friendly)
+- [ADR-001: Remote access via Tailscale](01-architecture/adr/ADR-001-remote-access-tailscale.md) — why Tailscale was chosen over FortiGate VPN, port forwarding and Cloudflare Tunnel
 
 ## Security Note
 

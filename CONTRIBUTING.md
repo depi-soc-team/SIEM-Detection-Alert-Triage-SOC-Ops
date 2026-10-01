@@ -31,13 +31,13 @@ All tasks are GitHub issues on the **SOC Project Board**, labeled by phase, owne
 <member>/<short-task>
 ```
 
-- `member`: `basel`, `merna`, `ramez`, `saieed`, `ahmed`
+- `member`: your first name, lowercase
 - `short-task`: lowercase kebab-case, a few words
 
-Examples: `merna/fortigate-syslog`, `ramez/dr-001-suspicious-powershell`, `ahmed/soc-dashboard`
+Examples: `<member>/fortigate-syslog`, `<member>/dr-001-suspicious-powershell`, `<member>/soc-dashboard`
 
 ```bash
-git checkout -b merna/fortigate-syslog
+git checkout -b <member>/fortigate-syslog
 ```
 
 ## 4. Commits
@@ -54,8 +54,8 @@ git diff --staged
 1. Push your branch: `git push -u origin <member>/<short-task>`
 2. Open a PR into `main`.
 3. Put `Closes #N` in the PR description (N = issue number) so the issue closes on merge.
-4. Request **one reviewer** — usually the issue's support member, otherwise any teammate.
-5. Address review comments, then the reviewer approves and merges.
+4. Request **one reviewer** — whoever holds the issue's **Support** role, otherwise any teammate.
+5. Address review comments; the reviewer approves and the Lead merges (if the Lead is unavailable, the reviewer may merge after approving).
 6. Delete the branch after merge.
 
 > **Team rule, not enforced by GitHub:** every PR needs one approving review before merge. Branch protection is not available on the free plan for private repositories, so GitHub will not block an unreviewed merge — we rely on each other to follow this rule. Do not merge your own PR without a review.
@@ -80,7 +80,7 @@ Name screenshots:
 YYYYMMDD_member_task.png
 ```
 
-Examples: `20261005_merna_fleet-agents-healthy.png`, `20261012_saieed_dr-003-alert.png`
+Examples: `20261005_<member>_fleet-agents-healthy.png`, `20261012_<member>_dr-003-alert.png`
 
 - Store them next to the doc that uses them (e.g. in an `images/` folder in that section).
 - Crop or blur real IPs, hostnames, usernames and tokens **before** committing.
@@ -93,7 +93,7 @@ Examples: `20261005_merna_fleet-agents-healthy.png`, `20261012_saieed_dr-003-ale
 - Do not commit raw logs or captures (`*.evtx`, `*.pcap`); commit sanitized excerpts instead.
 - Defang IOCs in reports (`hxxp://`, `1.2.3[.]4`).
 
-If you commit sensitive data by mistake, tell Basel immediately. Do not just delete it in a new commit; it stays in git history.
+If you commit sensitive data by mistake, tell the Lead immediately. Do not just delete it in a new commit; it stays in git history.
 
 ## 8. Content conventions
 
