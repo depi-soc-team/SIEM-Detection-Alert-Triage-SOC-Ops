@@ -42,7 +42,13 @@ Design and operate a small, realistic Security Operations Center (SOC) lab that:
 05-triage/            Triage reports and runbooks (see triage-template.md)
 06-soar-ai/           SOAR playbooks and AI-assisted workflows
 final-report/         Final deliverables
+docs/                 Team guides (Git & GitHub workflow)
 ```
+
+## Contributing
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — team rules: branch naming, PR flow, screenshot naming, security rules
+- [docs/GIT-GUIDE.md](docs/GIT-GUIDE.md) — step-by-step Git & GitHub guide for the team (Egyptian Arabic, beginner friendly)
 
 ## Security Note
 

@@ -2,6 +2,8 @@
 
 How the DEPI SOC team works in this repository. Read this before your first PR.
 
+New to Git? Follow the step-by-step guide (Egyptian Arabic): [docs/GIT-GUIDE.md](docs/GIT-GUIDE.md). It covers setup, the daily workflow with GitHub Desktop, the command line or the website only, reviews and common problems.
+
 ## 1. Clone
 
 ```bash
