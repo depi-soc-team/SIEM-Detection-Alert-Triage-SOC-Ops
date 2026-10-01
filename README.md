@@ -13,14 +13,14 @@ Design and operate a small, realistic Security Operations Center (SOC) lab that:
 - Visualizes SOC health and threat activity in Kibana dashboards
 - Automates enrichment and response with SOAR and AI-assisted workflows
 
-## 4-Week Plan
+## Project Timeline
 
-| Week | Focus | Key Deliverables |
-|------|-------|------------------|
-| 1 | Architecture & Onboarding | Lab architecture design, Elastic Stack deployment, Fleet + agents enrolled, first log sources ingesting |
-| 2 | Detection Engineering | Custom detection rules with ATT&CK mapping, attack simulation scenarios, rule validation |
-| 3 | Triage & Dashboards | Alert triage reports, runbooks, SOC dashboards and KPIs, rule tuning |
-| 4 | SOAR, AI & Final Report | Automation playbooks, AI-assisted triage, final report, presentation and demo |
+| Phase | Milestone | Due | Key Deliverables |
+|-------|-----------|-----|------------------|
+| 1 | M1 - Planning, Literature Review & Requirements | 2026-10-16 | Project plan, literature review, requirements specification, team & roles reported to instructor |
+| 2 | M2 - System Analysis & Design + Lab Setup | 2026-11-06 | SIEM architecture, data source inventory, retention/ILM, Fleet + Sysmon, FortiGate + VPN, onboarding evidence, ECS field mapping, lab VMs, Kibana RBAC, detection use cases, KPI definitions |
+| 3 | M3 - Implementation | 2026-11-30 | Detection rules, attack simulations, SOC dashboard, triage reports, TI enrichment, escalation templates, ATT&CK coverage map, Shuffle SOAR playbook, AI-assisted triage |
+| 4 | M4 - Testing, Reports & Final Presentation | 2026-12-04 | Test results, rule tuning, final report & executive summary, presentation & demo |
 
 ## Team
 
