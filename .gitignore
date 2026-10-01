@@ -216,3 +216,19 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- SOC project: secrets & sensitive artifacts ---
+.env
+*.key
+*.pem
+*.evtx
+*.pcap
+
+# Claude Code local (personal) files
+CLAUDE.local.md
+.claude/settings.local.json
+
+# OS / misc
+Thumbs.db
+desktop.ini
+*.log
