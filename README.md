@@ -1,1 +1,1 @@
-# soc-detection-project
+# SIEM-Detection-Alert-Triage-SOC-Ops
