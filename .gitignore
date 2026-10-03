@@ -232,3 +232,8 @@ CLAUDE.local.md
 Thumbs.db
 desktop.ini
 *.log
+
+# Unredacted evidence originals (date-prefixed screenshots) — keep in Google Drive, not the repo.
+# Anchored so sanitized copies in */images/ are still tracked.
+/2026*_*.png
+/04-dashboards/2026*_*.png
