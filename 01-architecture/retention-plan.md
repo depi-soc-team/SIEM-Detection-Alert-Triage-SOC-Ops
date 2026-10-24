@@ -25,6 +25,8 @@ This **Data Retention Plan** balances three critical business drivers:
 | **Cold** | Day 91 to 365 | Dense HDD / Cloud Object Storage | Cost-optimized, slower query latency | Searchable snapshots; 0 replicas (backed by blob storage) | Historical breach audits, Legal hold requests |
 | **Delete / Purge** | Day 366+ | — | Zero disk footprint | Automated index deletion following verified cold snapshot verification | Permanently deleted unless flagged for legal hold |
 
+> **Age is counted from rollover, not ingest.** ILM `min_age` for warm/cold/delete is measured from the moment the index rolls over. With a hot rollover at `max_age: 7d`, a document can be up to ~14 days old when it reaches warm, and the other boundaries shift by up to 7 days too. The day ranges above are approximate.
+
 ---
 
 ## 3. Storage Sizing & Capacity Estimation
@@ -42,15 +44,21 @@ This **Data Retention Plan** balances three critical business drivers:
 *Note: Elasticsearch native LZ4/Deflate compression typically reduces raw JSON volume by 35% to 50% upon index rollover.*
 
 ### 3.2 Hands-On Lab Sizing (4 Workstations + 2 DCs + 1 FortiGate)
-* **Average Lab Throughput:** 10–25 EPS.
-* **Daily Volume:** ~1.2 GB/day.
-* **Lab Disk Allocation:** 50 GB virtual disk on single Ubuntu SIEM node accommodates over 30 days of uncompressed lab testing without requiring tiered offloading.
+* **Observed Lab Throughput:** roughly **1 EPS** on a normal day. The SOC | Data Health dashboard on 2026-10-02 showed on the order of 50,000–100,000 events per 24 h across all hosts (see [04-dashboards](../04-dashboards/README.md)).
+* **Peak / planning figure:** 10–25 EPS is kept as an upper bound for attack-simulation days.
+* **Daily Volume:** at ~1 KB per event, about **0.05–0.1 GB/day** observed, up to ~1–2 GB/day at the peak figure. Confirm with real data stream sizes in **Stack Management > Index Management > Data Streams**.
+* **Lab Disk Allocation:** a 50 GB virtual disk on the single Ubuntu SIEM node comfortably holds the full project period (October to December) without tiered offloading.
 
 ---
 
 ## 4. Elasticsearch ILM Policy Definition
 
-Below is the automated JSON policy deployed to Elasticsearch (`soc-ilm-policy`) that enforces this lifecycle:
+### 4.1 Reference (production) policy: `soc-ilm-policy`
+
+The policy below enforces the reference lifecycle above. It is the **production design for the reference organization and is not deployed in the lab**:
+
+* The cold phase uses `searchable_snapshot`, which needs an **Enterprise** license (verify in **Stack Management > License Management**) and a registered snapshot repository (`soc_backup_repo`). The lab has neither.
+* Warm/cold tiers need dedicated data-tier nodes. The lab runs a single Elasticsearch node.
 
 ```json
 {
@@ -105,3 +113,38 @@ Below is the automated JSON policy deployed to Elasticsearch (`soc-ilm-policy`) 
   }
 }
 ```
+
+### 4.2 Lab policy: `soc-lab-ilm-policy` (proposed)
+
+The single-node lab uses a **hot → delete** lifecycle only. 90 days keeps every log from the start of onboarding (2026-10-02) available until the final presentation (2026-12-04).
+
+```json
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "rollover": {
+            "max_primary_shard_size": "10gb",
+            "max_age": "7d"
+          },
+          "set_priority": {
+            "priority": 100
+          }
+        }
+      },
+      "delete": {
+        "min_age": "90d",
+        "actions": {
+          "delete": {}
+        }
+      }
+    }
+  }
+}
+```
+
+**How to apply:** Fleet-managed integration data streams use the built-in `logs` ILM policy by default. To switch a data stream to `soc-lab-ilm-policy`, set `index.lifecycle.name` in that data stream's `@custom` component template (e.g. `logs-system.security@custom`, `logs-windows.sysmon_operational@custom`, `logs-fortinet_fortigate.log@custom`). The change applies from the next rollover.
+
+**Status:** proposed, not yet applied. Issue #3 still needs the screenshot showing the policy attached to the data streams (**Stack Management > Index Lifecycle Policies > soc-lab-ilm-policy > linked indices**).

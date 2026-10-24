@@ -38,13 +38,17 @@ C:\Windows\Temp\Sysmon64.exe -accepteula -i C:\Windows\Temp\sysmonconfig.xml
 
 #### Step 2: Deploy Elastic Agent via Fleet
 In Kibana -> **Management -> Fleet -> Add Agent**:
-1. Assign agent policy: `Windows-Workstation-Policy` or `Domain-Controller-Policy`.
+1. Assign the agent policy used in the lab:
+   * Workstations (`<PC-01>` to `<PC-04>`): `Windows Policy`
+   * Domain controllers (`<PDC>`, `<ADC>`): `Windows Server Policy`
+   * SIEM node: `Fleet Server Policy`
 2. Execute enrollment script on target Windows host:
 ```powershell
 $ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest -Uri "https://<FLEET_SERVER_IP>:8220/api/status" -SkipCertificateCheck
 .\elastic-agent.exe install --url="https://<FLEET_SERVER_IP>:8220" --enrollment-token="<ENROLLMENT_TOKEN>" --insecure
 ```
+> `-SkipCertificateCheck` needs PowerShell 7+ (Windows PowerShell 5.1 does not support it). `--insecure` skips TLS verification and is only acceptable in the lab with the self-signed Fleet Server certificate; in production use `--certificate-authorities=<CA_PATH>` instead. Never commit the real enrollment token.
 
 #### Step 3: Enable GPO for PowerShell Audit
 On the Primary Domain Controller (`<PDC>`), apply GPO `SOC-Logging-Policy`:
@@ -70,11 +74,12 @@ end
 ```
 
 #### Step 2: Configure Elastic Agent Syslog Listener
-In Fleet -> Integrations -> **Custom Logs / Fortinet Integration**:
-* Input type: `UDP syslog`
+In Fleet -> Integrations -> **Fortinet FortiGate Firewall Logs** (package `fortinet_fortigate`), added to `Fleet Server Policy` on the SIEM node:
+* Input type: `UDP`
 * Listen address: `0.0.0.0:9004`
-* Index pattern: `logs-fortinet.firewall-*`
-* Ingest pipeline: `logs-fortinet.firewall-pipeline`
+* Data stream: `logs-fortinet_fortigate.log-default` (dataset `fortinet_fortigate.log`)
+* Ingest pipeline: managed by the integration (no custom pipeline needed)
+* Kibana data view: `SOC - FortiGate` = `logs-fortinet_fortigate.*` (see [02-onboarding/data-views.md](../02-onboarding/data-views.md))
 
 ---
 
@@ -83,20 +88,27 @@ In Fleet -> Integrations -> **Custom Logs / Fortinet Integration**:
 To prove onboarding was successful, analysts execute verification checks across the SIEM stack.
 
 ### Verification Checklist:
-* [x] **Agent Status**: Fleet displays agent status as `Healthy` with steady heartbeats.
-* [x] **Stream Discovery**: Events are visible in Kibana Discover under data view `SOC - Windows` (`logs-windows.*-*`).
-* [x] **Network Stream Discovery**: Firewall events visible under data view `SOC - FortiGate` (`logs-fortinet.*-*`).
-* [x] **Timestamp Check**: `@timestamp` matches real-world UTC generation time within $\pm 2$ seconds.
-* [x] **No Unparsed Errors**: Field `error.message` is absent in indexed documents.
+Screenshots: [02-onboarding/evidence.md](../02-onboarding/evidence.md).
+
+* [x] **Agent Status**: Fleet displays all 6 agents as `Healthy` with steady heartbeats.
+* [x] **Stream Discovery**: Events are visible in Kibana Discover under data view `SOC - Windows` (`logs-windows*,logs-system*`).
+* [x] **Network Stream Discovery**: Firewall events visible under data view `SOC - FortiGate` (`logs-fortinet_fortigate.*`).
+* [ ] **Timestamp Check**: `@timestamp` matches real-world UTC generation time within $\pm 2$ seconds. *(not yet evidenced)*
+* [ ] **No Unparsed Errors**: Field `error.message` is absent in indexed documents. *(not yet evidenced)*
+
+> Data view patterns: use `logs-windows*`, not `logs-windows.*` (the latter did not match in the data view wizard). `host.name` is stored lowercase and KQL values are case-sensitive.
 
 ### Verification Query Examples (KQL - Kibana Query Language):
-```kql
-# 1. Verify Windows Security Logon Events
-event.code: 4624 and winlog.channel: "Security"
+```text
+1. Verify Windows Security logon events (data view: SOC - Windows)
+   event.code : "4624" and data_stream.dataset : "system.security"
 
-# 2. Verify Sysmon Process Creation Telemetry
-event.code: 1 and winlog.channel: "Microsoft-Windows-Sysmon/Operational"
+2. Verify Sysmon process creation telemetry (data view: SOC - Windows)
+   event.code : "1" and data_stream.dataset : "windows.sysmon_operational"
 
-# 3. Verify FortiGate Network Traffic logs
-event.dataset: "fortinet.firewall" and network.transport: "tcp"
+3. Verify FortiGate network traffic logs (data view: SOC - FortiGate)
+   data_stream.dataset : "fortinet_fortigate.log" and network.transport : "tcp"
+
+4. Check for parsing errors (data view: logs-*)
+   error.message : *
 ```
