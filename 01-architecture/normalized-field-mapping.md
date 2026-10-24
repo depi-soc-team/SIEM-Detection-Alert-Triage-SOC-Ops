@@ -64,47 +64,61 @@ A single detection rule or dashboard panel immediately works across all operatin
 | `dstip` | `destination.ip` | `ip` | Destination server / host IP address |
 | `dstport` | `destination.port` | `long` | Target service port (e.g. 80, 443, 53) |
 | `proto` (e.g. `6` / `17`) | `network.transport` | `keyword` | Transport protocol (`tcp`, `udp`, `icmp`) |
-| `action` (`accept` / `deny` / `close`)| `event.action` / `event.outcome` | `keyword` | `allowed` or `denied` |
+| `action` (`accept` / `close` / `server-rst` / `deny` ...) | `event.action` | `keyword` | Raw FortiGate action, kept as-is (e.g. `accept`, `close`, `server-rst` as seen in the lab). `close` means an **allowed** session that ended normally, not a block |
+| `action` (derived) | `event.outcome` | `keyword` | `success` for allowed/ended sessions, `failure` for `deny` / `block` |
 | `policyid` | `rule.id` | `keyword` | Firewall security policy rule index |
 | `sentbyte` | `source.bytes` | `long` | Bytes transmitted from source |
 | `rcvdbyte` | `destination.bytes` | `long` | Bytes returned from destination |
-| `duration` | `event.duration` | `long` | Session duration (nanoseconds/seconds) |
+| `duration` | `event.duration` | `long` | Session duration. FortiGate logs **seconds**; ECS `event.duration` is **nanoseconds** (multiply by 1,000,000,000) |
 
 ---
 
 ## 3. Normalization Ingest Pipeline Example
 
-Below is the conceptual Elasticsearch Ingest Pipeline definition that normalizes raw FortiGate syslog into ECS:
+> **In the lab, no custom pipeline is used.** The Fortinet FortiGate integration (`fortinet_fortigate.log`) ships its own ingest pipeline that already maps these fields to ECS. The pipeline below is a **conceptual example** for a source without an official integration. It shows the technique and is not deployed.
+
+FortiGate logs are `key=value` pairs whose order varies between log types, so a `kv` processor is more robust than a single positional `grok` pattern:
 
 ```json
 {
-  "description": "Normalize FortiGate Syslog to Elastic Common Schema",
+  "description": "Conceptual example: normalize FortiGate key=value syslog to ECS",
   "processors": [
     {
-      "grok": {
+      "kv": {
         "field": "message",
-        "patterns": [
-          "srcip=%{IP:source.ip} srcport=%{INT:source.port:long} dstip=%{IP:destination.ip} dstport=%{INT:destination.port:long} action=%{WORD:temp_action} proto=%{INT:network.iana_number}"
-        ]
+        "field_split": " (?=[a-z_]+=)",
+        "value_split": "=",
+        "trim_value": "\"",
+        "target_field": "fgt"
       }
     },
+    { "convert": { "field": "fgt.srcip",   "target_field": "source.ip",        "type": "ip",   "ignore_missing": true } },
+    { "convert": { "field": "fgt.srcport", "target_field": "source.port",      "type": "long", "ignore_missing": true } },
+    { "convert": { "field": "fgt.dstip",   "target_field": "destination.ip",   "type": "ip",   "ignore_missing": true } },
+    { "convert": { "field": "fgt.dstport", "target_field": "destination.port", "type": "long", "ignore_missing": true } },
+    { "set": { "field": "event.category", "value": ["network"] } },
+    { "set": { "field": "event.action", "copy_from": "fgt.action", "if": "ctx.fgt?.action != null" } },
     {
-      "set": {
-        "field": "event.category",
-        "value": "network"
+      "script": {
+        "lang": "painless",
+        "if": "ctx.fgt?.action != null",
+        "source": "if (ctx.event == null) { ctx.event = [:]; } String a = ctx.fgt.action; ctx.event.outcome = (a == 'deny' || a == 'block') ? 'failure' : 'success';"
       }
     },
     {
       "script": {
         "lang": "painless",
-        "source": "if (ctx.temp_action == 'accept' || ctx.temp_action == 'pass') { ctx.event.outcome = 'success'; ctx.event.action = 'allowed'; } else { ctx.event.outcome = 'failure'; ctx.event.action = 'denied'; }"
+        "if": "ctx.fgt?.duration != null",
+        "source": "ctx.event.duration = Long.parseLong(ctx.fgt.duration) * 1000000000L;"
       }
     },
-    {
-      "remove": {
-        "field": "temp_action"
-      }
-    }
+    { "remove": { "field": "fgt", "ignore_missing": true } }
   ]
 }
 ```
+
+Notes on the example:
+* `event.action` keeps the raw FortiGate value, the same as the official integration does.
+* Only `deny` / `block` count as `failure`. `accept`, `close` and `server-rst` are allowed sessions.
+* `duration` is converted from seconds to the nanoseconds ECS expects.
+* Test any pipeline with **Stack Management > Ingest Pipelines > Test pipeline** (or `POST _ingest/pipeline/_simulate`) before using it.

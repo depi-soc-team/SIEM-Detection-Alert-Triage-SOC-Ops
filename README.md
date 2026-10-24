@@ -54,6 +54,7 @@ docs/                 Team guides (Git & GitHub workflow, remote lab access)
 
 ## Lab Access
 
+- [01-architecture/siem-architecture.md](01-architecture/siem-architecture.md) — SIEM reference architecture (medium organization) and lab as-built diagrams, with a reference → lab gap mapping
 - [docs/REMOTE-ACCESS.md](docs/REMOTE-ACCESS.md) — how to reach the lab and Kibana remotely over Tailscale (Egyptian Arabic, beginner friendly)
 - [ADR-001: Remote access via Tailscale](01-architecture/adr/ADR-001-remote-access-tailscale.md) — why Tailscale was chosen over FortiGate VPN, port forwarding and Cloudflare Tunnel
 
